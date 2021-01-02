@@ -83,6 +83,10 @@ def goto_previous_deck():
     move(get_previous)
 
 
+def study():
+    mw.moveToState("review")
+
+
 if mw is None:
     raise RuntimeError("Can't get interface. Anki not running?")
 
@@ -90,5 +94,5 @@ mw.applyShortcuts([("j", goto_next_deck)])
 mw.applyShortcuts([("k", goto_previous_deck)])
 mw.applyShortcuts([("g", goto_first_deck)])
 mw.applyShortcuts([("Shift+g", goto_last_deck)])
-mw.applyShortcuts([(" ", mw.onOverview)])
-mw.applyShortcuts([("Return", mw.onOverview)])
+mw.applyShortcuts([("o", mw.onOverview)])
+mw.applyShortcuts([("Return", study)])
