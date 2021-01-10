@@ -58,33 +58,40 @@ def goto(target: DeckId):
     mw.deckBrowser.show()
 
 
-def check_same_level(A_id, B_id):
-    """Check if two decks have identical level."""
+def compare_level(A_id, B_id):
+    """Compare the levels of two decks."""
     tree = mw.col.decks.deck_tree()
     A = mw.col.decks.find_deck_in_tree(tree, A_id)
     B = mw.col.decks.find_deck_in_tree(tree, B_id)
     if A is None or B is None:
-        return False
-    return A.level == B.level
+        return -1
+    return A.level - B.level
 
 
-def move(func: Callable, same_level=False):
+def check_same_level(A_id, B_id):
+    """Check if two decks have identical level."""
+    return compare_level(A_id, B_id) == 0
+
+
+def check_lower_level(A_id, B_id):
+    """Deck A is less deep nested then deck B."""
+    return compare_level(A_id, B_id) < 0
+
+
+def move(func: Callable, constraint_check: Callable = lambda *_: True):
     """Move to a new position found by calling `func`."""
     if mw is None:
         raise RuntimeError("Can't get interface. Anki not running?")
     current = mw.col.decks.selected()
     alldecks = mw.col.decks.all_names_and_ids()
     new_deck_id = None
-    if same_level:
-        new_deck_id = func(alldecks, current, check_same_level)
-    else:
-        new_deck_id = func(alldecks, current, lambda *_: True)
+    new_deck_id = func(alldecks, current, constraint_check)
     if new_deck_id:
         goto(new_deck_id.id)
 
 
 def goto_next_deck_same_lvl():
-    move(get_next, True)
+    move(get_next, check_same_level)
 
 
 def goto_next_deck():
@@ -92,11 +99,15 @@ def goto_next_deck():
 
 
 def goto_previous_deck_same_lvl():
-    move(get_previous, True)
+    move(get_previous, check_same_level)
 
 
 def goto_previous_deck():
     move(get_previous)
+
+
+def goto_parent_deck():
+    move(get_previous, check_lower_level)
 
 
 def goto_first_deck():
@@ -118,6 +129,7 @@ mw.applyShortcuts([("j", goto_next_deck)])
 mw.applyShortcuts([("Shift+j", goto_next_deck_same_lvl)])
 mw.applyShortcuts([("k", goto_previous_deck)])
 mw.applyShortcuts([("Shift+k", goto_previous_deck_same_lvl)])
+mw.applyShortcuts([("h", goto_parent_deck)])
 mw.applyShortcuts([("g", goto_first_deck)])
 mw.applyShortcuts([("Shift+g", goto_last_deck)])
 mw.applyShortcuts([("o", mw.onOverview)])
