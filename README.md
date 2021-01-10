@@ -8,3 +8,5 @@ Using this plugin you can move in Anki with vi-like keys:
 - `G` last deck
 - `o` open selected deck
 - `Return` study selected deck
+
+![movements](vimove.png)
