@@ -103,6 +103,12 @@ def move(func: Callable, constraint_check: Callable = lambda *_: True):
         goto(new_deck_id)
 
 
+def toggle_collapse():
+    current = mw.col.decks.selected()
+    mw.col.decks.collapse(current)
+    mw.deckBrowser.show()
+
+
 def goto_next_deck_same_lvl():
     move(get_next, check_same_level)
 
@@ -149,6 +155,8 @@ scuts = mw.applyShortcuts(
         ("Shift+g", goto_last_deck),
         ("o", mw.onOverview),
         ("Return", study),
+        ("+", toggle_collapse),
+        ("-", toggle_collapse),
     ]
 )
 
