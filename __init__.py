@@ -24,6 +24,15 @@ def get_last(all_decks: Iterable, *_) -> Optional[DeckTreeNode]:
     return last
 
 
+def visible(deck_id):
+    """Test if the deck is visible."""
+    parrents = mw.col.decks.parents(deck_id)
+    for parrent in parrents:
+        if parrent["collapsed"]:
+            return False
+    return True
+
+
 def get_next(
     all_decks: Iterable, current: DeckId, constraint_check: Callable
 ) -> Optional[DeckTreeNode]:
@@ -31,7 +40,7 @@ def get_next(
     found_current = False
     next_elem = None
     for deck in all_decks:
-        if found_current and constraint_check(deck.id, current):
+        if found_current and constraint_check(deck.id, current) and visible(deck.id):
             next_elem = deck
             break
         if deck.id == current:
@@ -47,7 +56,7 @@ def get_previous(
     for deck in all_decks:
         if deck.id == current:
             break
-        if constraint_check(deck.id, current):
+        if constraint_check(deck.id, current) and visible(deck.id):
             last = deck
     return last
 
@@ -84,11 +93,14 @@ def move(func: Callable, constraint_check: Callable = lambda *_: True):
     if mw is None:
         raise RuntimeError("Can't get interface. Anki not running?")
     current = mw.col.decks.selected()
-    alldecks = mw.col.decks.all_names_and_ids()
-    new_deck_id = None
-    new_deck_id = func(alldecks, current, constraint_check)
-    if new_deck_id:
-        goto(new_deck_id.id)
+    alldecks = mw.col.decks.all_names_and_ids(skip_empty_default=True)
+    new_deck = func(alldecks, current, constraint_check)
+    if new_deck:
+        new_deck_id = new_deck.id
+        parrents = mw.col.decks.parents(new_deck_id)
+        while not visible(new_deck_id) and len(parrents) > 0:
+            new_deck_id = parrents.pop().get("id")
+        goto(new_deck_id)
 
 
 def goto_next_deck_same_lvl():
