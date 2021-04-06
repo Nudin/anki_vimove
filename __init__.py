@@ -1,7 +1,8 @@
 from typing import Callable, Iterable, NewType, Optional
 
+import aqt  # noqa: F401
 from anki.rsbackend import DeckTreeNode
-from aqt import mw
+from aqt import gui_hooks, mw
 
 # Id of a deck (calld 'did' in Anki code)
 DeckId = NewType("DeckId", int)
@@ -125,12 +126,29 @@ def study():
 if mw is None:
     raise RuntimeError("Can't get interface. Anki not running?")
 
-mw.applyShortcuts([("j", goto_next_deck)])
-mw.applyShortcuts([("Shift+j", goto_next_deck_same_lvl)])
-mw.applyShortcuts([("k", goto_previous_deck)])
-mw.applyShortcuts([("Shift+k", goto_previous_deck_same_lvl)])
-mw.applyShortcuts([("h", goto_parent_deck)])
-mw.applyShortcuts([("g", goto_first_deck)])
-mw.applyShortcuts([("Shift+g", goto_last_deck)])
-mw.applyShortcuts([("o", mw.onOverview)])
-mw.applyShortcuts([("Return", study)])
+scuts = mw.applyShortcuts(
+    [
+        ("j", goto_next_deck),
+        ("Shift+j", goto_next_deck_same_lvl),
+        ("k", goto_previous_deck),
+        ("Shift+k", goto_previous_deck_same_lvl),
+        ("h", goto_parent_deck),
+        ("g", goto_first_deck),
+        ("Shift+g", goto_last_deck),
+        ("o", mw.onOverview),
+        ("Return", study),
+    ]
+)
+
+
+def setup(state, _oldstate):
+    """ Enable the shortcuts only in the deck browser """
+    if state == "deckBrowser":
+        for scut in scuts:
+            scut.setEnabled(True)
+    else:
+        for scut in scuts:
+            scut.setEnabled(False)
+
+
+gui_hooks.state_did_change.append(setup)
