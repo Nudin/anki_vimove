@@ -147,14 +147,21 @@ if mw is None:
 scuts = mw.applyShortcuts(
     [
         ("j", goto_next_deck),
+        ("down", goto_next_deck),
         ("Shift+j", goto_next_deck_same_lvl),
+        ("PgDown", goto_next_deck_same_lvl),
         ("k", goto_previous_deck),
+        ("up", goto_previous_deck),
         ("Shift+k", goto_previous_deck_same_lvl),
+        ("PgUp", goto_previous_deck_same_lvl),
         ("h", goto_parent_deck),
         ("g", goto_first_deck),
+        ("Home", goto_first_deck),
         ("Shift+g", goto_last_deck),
+        ("End", goto_last_deck),
         ("o", mw.onOverview),
         ("Return", study),
+        ("Enter", study),
         ("+", toggle_collapse),
         ("-", toggle_collapse),
     ]
@@ -162,7 +169,7 @@ scuts = mw.applyShortcuts(
 
 
 def setup(state, _oldstate):
-    """ Enable the shortcuts only in the deck browser """
+    """Enable the shortcuts only in the deck browser"""
     if state == "deckBrowser":
         for scut in scuts:
             scut.setEnabled(True)
