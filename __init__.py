@@ -144,28 +144,24 @@ def study():
 if mw is None:
     raise RuntimeError("Can't get interface. Anki not running?")
 
-scuts = mw.applyShortcuts(
-    [
-        ("j", goto_next_deck),
-        ("down", goto_next_deck),
-        ("Shift+j", goto_next_deck_same_lvl),
-        ("PgDown", goto_next_deck_same_lvl),
-        ("k", goto_previous_deck),
-        ("up", goto_previous_deck),
-        ("Shift+k", goto_previous_deck_same_lvl),
-        ("PgUp", goto_previous_deck_same_lvl),
-        ("h", goto_parent_deck),
-        ("g", goto_first_deck),
-        ("Home", goto_first_deck),
-        ("Shift+g", goto_last_deck),
-        ("End", goto_last_deck),
-        ("o", mw.onOverview),
-        ("Return", study),
-        ("Enter", study),
-        ("+", toggle_collapse),
-        ("-", toggle_collapse),
-    ]
-)
+str2func = {
+    "goto_first_deck": goto_first_deck,
+    "goto_last_deck": goto_last_deck,
+    "goto_next_deck": goto_next_deck,
+    "goto_next_deck_same_lvl": goto_next_deck_same_lvl,
+    "goto_parent_deck": goto_parent_deck,
+    "goto_previous_deck": goto_previous_deck,
+    "goto_previous_deck_same_lvl": goto_previous_deck_same_lvl,
+    "open_overview": mw.onOverview,
+    "study": study,
+    "toggle_collapse": toggle_collapse,
+}
+
+config = mw.addonManager.getConfig(__name__)
+shortcut_config = []
+for key, action in config["keys"].items():
+    shortcut_config.append((key, str2func[action]))
+scuts = mw.applyShortcuts(shortcut_config)
 
 
 def setup(state, _oldstate):

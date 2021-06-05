@@ -1,0 +1,22 @@
+{
+	"keys":         {
+        "j":        "goto_next_deck",
+        "down":     "goto_next_deck",
+        "Shift+j":  "goto_next_deck_same_lvl",
+        "PgDown":   "goto_next_deck_same_lvl",
+        "k":        "goto_previous_deck",
+        "up":       "goto_previous_deck",
+        "Shift+k":  "goto_previous_deck_same_lvl",
+        "PgUp":     "goto_previous_deck_same_lvl",
+        "h":        "goto_parent_deck",
+        "g":        "goto_first_deck",
+        "Home":     "goto_first_deck",
+        "Shift+g":  "goto_last_deck",
+        "End":      "goto_last_deck",
+        "o":        "open_overview",
+        "Return":   "study",
+        "Enter":    "study",
+        "+":        "toggle_collapse",
+        "-":        "toggle_collapse"
+    }
+}
